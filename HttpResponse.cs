@@ -9,6 +9,7 @@ namespace DotnetSWF
         public int ResponseCode => _responseCode;
         
         public static HttpResponse NotFound => new HttpResponse(new Dictionary<string, string>(), 404, "Error 404: File not found");
+        public static HttpResponse ServerError => new HttpResponse(new Dictionary<string, string>(), 500, "Error 500: Server error");
         public static HttpResponse OK => new HttpResponse(new Dictionary<string, string>(), 200, "");
         public string Content { get => _content; set => _content = value; }
 

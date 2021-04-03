@@ -10,17 +10,28 @@ namespace DotnetSWF
 
         public IHttpResponseResult GetHttpResponseByRoute(HttpRequest request)
         {
-            foreach(var path in _pathsToTheMethods)
+            try
             {
-                if(path.Key == request.Path) 
+                foreach (var path in _pathsToTheMethods)
                 {
-                    var source = path.Value.Source;
-                    var controller = path.Value.Method;
-                    return (IHttpResponseResult)controller.Invoke(source, new object[] {});
+                    if (path.Key == request.Path)
+                    {
+                        var source = path.Value.Source;
+                        var controller = path.Value.Method;
+                        return (IHttpResponseResult)controller.Invoke(source, new object[] { });
+                    }
                 }
+                // Сделать работника со статическими файлами
+                return HttpResponse.NotFound;
             }
-            // Сделать работника со статическими файлами
-            return HttpResponse.NotFound;
+            catch(Exception ex)
+            {
+                HttpResponse result = HttpResponse.ServerError;
+#if Debug
+                result.Content += "\n" + ex.Message;
+#endif
+                return result;
+            }
         }
 
         public void RegisterController(Controller controller)

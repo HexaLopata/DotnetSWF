@@ -13,7 +13,7 @@ namespace DotnetSWF
         private Socket _server;
         private int _port = 5000;
         private string _iP = "127.0.0.1";
-        private int _backLog = 1;
+        private int _backLog = 10;
         private const int bufferSize = 512;
         private bool _detailedLog = true;
         private IRouter _router = new DefaultRouter();
@@ -38,7 +38,6 @@ namespace DotnetSWF
                 while (true)
                 {
                     Socket client = _server.Accept();
-                    Console.WriteLine("Client was connected");
                     byte[] buffer = new byte[bufferSize];
                     int bytes = 0;
                     do
