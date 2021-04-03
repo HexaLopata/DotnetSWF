@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
+using System.IO;
 using System.Collections.Generic;
 
 namespace DotnetSWF
@@ -12,9 +13,16 @@ namespace DotnetSWF
         private Socket _server;
         private int _port = 5000;
         private string _iP = "127.0.0.1";
-        private int _backLog = 10;
-        private const int bufferSize = 1024; 
+        private int _backLog = 1;
+        private const int bufferSize = 512;
         private bool _detailedLog = true;
+        private IRouter _router = new DefaultRouter();
+
+        public IRouter Router
+        {
+            get => _router;
+            set => _router = value;
+        }
 
         public WebApp(IWebAppInitializer initializer)
         {
@@ -40,26 +48,39 @@ namespace DotnetSWF
                     while (client.Available > 0);
 
                     string stringData = Encoding.UTF8.GetString(buffer);
-                    if(_detailedLog)
+                    if (_detailedLog)
                     {
                         Console.WriteLine("This data was sent by client:");
                         Console.WriteLine(stringData);
                     }
-                    
-                    // HttpRequest request = HttpRequest.Parse(stringData);
-                    // Do something with request
-                    var response = new HttpResponse(new Dictionary<string, string>(), 200);
-                    client.Send(Encoding.UTF8.GetBytes(response.ToString() + "\n" + "<a>Hello from SWF!!!</a>"));
+
+                    HttpRequest request = null;
+                    HttpResponse response = null;
+                    if (HttpRequest.TryParse(stringData, ref request))
+                    {
+                        response = _router.GetHttpResponseByRoute(request).GetHttpResponse();
+                        if (_detailedLog)
+                        {
+                            System.Console.WriteLine("Response was sent: ");
+                           Console.WriteLine(response.ToString());
+                        }
+                        client.Send(response.GetBytes(Encoding.UTF8));
+                    }
+                    else
+                    {
+                        client.Send(HttpResponse.NotFound.GetBytes(Encoding.UTF8));
+                    }
                     client.Shutdown(SocketShutdown.Both);
                     client.Close();
                 }
             }
             catch (SocketException socketEx)
             {
+                Console.WriteLine("Socket Exception!");
                 Console.WriteLine(socketEx.Message);
                 Run();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Unexpected error was occured!!!");
                 Console.WriteLine("Server will stop working!");

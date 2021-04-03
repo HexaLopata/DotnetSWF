@@ -10,7 +10,8 @@ namespace DotnetSWF
         GET,
         POST,
         PUT,
-        DELETE
+        DELETE,
+        ANY
     }
 
     public class HttpRequest
@@ -40,6 +41,19 @@ namespace DotnetSWF
                 result += header.Key + ": " + header.Value + "\n";
             }
             return result;
+        }
+
+        public static bool TryParse(string requestString, ref HttpRequest request)
+        {
+            try
+            {
+                request = Parse(requestString);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static HttpRequest Parse(string requestString)
@@ -72,7 +86,6 @@ namespace DotnetSWF
             }
             catch(Exception ex)
             {   
-                Console.WriteLine(ex.Message);
                 throw new Exception("HttpRequest Parse Error");
             }
         }
