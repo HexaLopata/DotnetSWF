@@ -2,7 +2,7 @@ using System.IO;
 using System.Text;
 using DotnetSWF.HTTPInteraction;
 
-namespace DotnetSWF
+namespace DotnetSWF.FileManagement
 {
     public class StaticFileWorker : IStaticFileWorker
     {

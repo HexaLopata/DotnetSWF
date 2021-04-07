@@ -1,6 +1,6 @@
 using DotnetSWF.HTTPInteraction;
 
-namespace DotnetSWF
+namespace DotnetSWF.FileManagement
 {
     public interface IStaticFileWorker
     {
