@@ -1,6 +1,7 @@
 using System;
+using DotnetSWF.HTTPInteraction;
 
-namespace DotnetSWF
+namespace DotnetSWF.Routing
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class RouteMethodAttribute : Attribute

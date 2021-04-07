@@ -1,12 +1,19 @@
 using System.Collections.Generic;
 using System;
+using DotnetSWF.HTTPInteraction;
 
-namespace DotnetSWF
+namespace DotnetSWF.Routing
 {
     public class DefaultRouter : IRouter
     {
         private List<Controller> _controllers = new List<Controller>();
         private Dictionary<string, RouteMethodInfo> _pathsToTheMethods = new Dictionary<string, RouteMethodInfo>();
+        private IStaticFileWorker _fileWorker;
+
+        public DefaultRouter(IStaticFileWorker fileWorker)
+        {
+            _fileWorker = fileWorker;
+        }
 
         public IHttpResponseResult GetHttpResponseByRoute(HttpRequest request)
         {
@@ -16,13 +23,13 @@ namespace DotnetSWF
                 {
                     if (path.Key == request.Path)
                     {
+                        // TODO Реализовать подстановку аргументов после знака '?'
                         var source = path.Value.Source;
                         var controller = path.Value.Method;
                         return (IHttpResponseResult)controller.Invoke(source, new object[] { });
                     }
                 }
-                // Сделать работника со статическими файлами
-                return HttpResponse.NotFound;
+                return _fileWorker.GetFileAsHttpResponse(request.Path);
             }
             catch(Exception ex)
             {

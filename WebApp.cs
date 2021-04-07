@@ -2,32 +2,25 @@ using System;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
-using System.IO;
-using System.Collections.Generic;
+using DotnetSWF.Routing;
+using DotnetSWF.HTTPInteraction;
 
 namespace DotnetSWF
 {
     public class WebApp
     {
-        private IWebAppInitializer _initializer;
         private Socket _server;
         private int _port = 5000;
-        private string _iP = "127.0.0.1";
+        private string _iP = "192.168.0.11";
         private int _backLog = 10;
-        private const int bufferSize = 512;
+        private const int bufferSize = 4096;
         private bool _detailedLog = true;
-        private IRouter _router = new DefaultRouter();
+        private IRouter _router = new DefaultRouter(new StaticFileWorker());
 
         public IRouter Router
         {
             get => _router;
             set => _router = value;
-        }
-
-        public WebApp(IWebAppInitializer initializer)
-        {
-            _initializer = initializer;
-            _initializer.Initialize(this);
         }
 
         public void Run()
@@ -47,26 +40,22 @@ namespace DotnetSWF
                     while (client.Available > 0);
 
                     string stringData = Encoding.UTF8.GetString(buffer);
-                    if (_detailedLog)
-                    {
-                        Console.WriteLine("This data was sent by client:");
-                        Console.WriteLine(stringData);
-                    }
-
                     HttpRequest request = null;
                     HttpResponse response = null;
+                    Console.WriteLine("Client connected");
                     if (HttpRequest.TryParse(stringData, ref request))
                     {
-                        response = _router.GetHttpResponseByRoute(request).GetHttpResponse();
                         if (_detailedLog)
                         {
-                            System.Console.WriteLine("Response was sent: ");
-                           Console.WriteLine(response.ToString());
+                            Console.WriteLine("\tMethod: " + request.Method);
+                            Console.WriteLine("\tPath: " + request.Path);
                         }
+                        response = _router.GetHttpResponseByRoute(request).GetHttpResponse();
                         client.Send(response.GetBytes(Encoding.UTF8));
                     }
                     else
                     {
+                        Console.WriteLine("\tInvalid Request");
                         client.Send(HttpResponse.NotFound.GetBytes(Encoding.UTF8));
                     }
                     client.Shutdown(SocketShutdown.Both);

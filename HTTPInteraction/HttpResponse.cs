@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DotnetSWF
+namespace DotnetSWF.HTTPInteraction
 {
     public class HttpResponse : IHttpResponseResult
     {
         public Dictionary<string, string> Headers => _headers;
         public int ResponseCode => _responseCode;
         
-        public static HttpResponse NotFound => new HttpResponse(new Dictionary<string, string>(), 404, "Error 404: File not found");
+        public static HttpResponse NotFound => new HttpResponse(new Dictionary<string, string>(), 404, "Error 404: Page or file not found");
         public static HttpResponse ServerError => new HttpResponse(new Dictionary<string, string>(), 500, "Error 500: Server error");
         public static HttpResponse OK => new HttpResponse(new Dictionary<string, string>(), 200, "");
         public string Content { get => _content; set => _content = value; }

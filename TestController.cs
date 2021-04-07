@@ -1,3 +1,6 @@
+using DotnetSWF.Routing;
+using DotnetSWF.HTTPInteraction;
+
 namespace DotnetSWF
 {
     public class TestController : Controller

@@ -1,14 +1,18 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using DotnetSWF.Routing;
+using DotnetSWF.HTTPInteraction;
 
 namespace DotnetSWF
 {
     public abstract class Controller
     {
-        private Dictionary<string, RouteMethodInfo> _routeMethods = new Dictionary<string, RouteMethodInfo>();
-
         public Dictionary<string, RouteMethodInfo> RouteMethods => _routeMethods;
+
+        protected IStaticFileWorker _fileWorker = new StaticFileWorker();
+
+        private Dictionary<string, RouteMethodInfo> _routeMethods = new Dictionary<string, RouteMethodInfo>();
 
         public Controller()
         {

@@ -3,7 +3,7 @@ using System.Text;
 using System.Net;
 using System;
 
-namespace DotnetSWF
+namespace DotnetSWF.HTTPInteraction
 {
     public enum HTTPRequestMethods
     {
@@ -70,22 +70,21 @@ namespace DotnetSWF
                     string headerName = requestStrings[i].Split(':')[0];
                     if (IsHeaderExists(headerName))
                     {
-                        headers.Add(headerName, requestStrings[i].Split(':')[1]);
-                    }
-
-                    if (IsMethodExists(method))
-                    {
-                        return new HttpRequest(headers, Enum.Parse<HTTPRequestMethods>(method.ToUpper()), path);
-                    }
-                    else
-                    {
-                        throw new Exception("HttpRequest Parse Error");
+                        var index = requestStrings[i].IndexOf(':');
+                        var headerValue = requestStrings[i].Substring(index + 2);
+                        headers.Add(headerName, headerValue);
                     }
                 }
+
+                if (IsMethodExists(method))
+                {
+                    return new HttpRequest(headers, Enum.Parse<HTTPRequestMethods>(method.ToUpper()), path);
+                }
                 throw new Exception("HttpRequest Parse Error");
+
             }
-            catch(Exception ex)
-            {   
+            catch (Exception ex)
+            {
                 throw new Exception("HttpRequest Parse Error");
             }
         }

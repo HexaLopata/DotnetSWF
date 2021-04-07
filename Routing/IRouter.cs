@@ -1,4 +1,6 @@
-namespace DotnetSWF
+using DotnetSWF.HTTPInteraction;
+
+namespace DotnetSWF.Routing
 {
     public interface IRouter
     {

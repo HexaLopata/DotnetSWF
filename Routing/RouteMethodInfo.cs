@@ -1,6 +1,7 @@
 using System.Reflection;
+using DotnetSWF.HTTPInteraction;
 
-namespace DotnetSWF
+namespace DotnetSWF.Routing
 {
     public class RouteMethodInfo
     {

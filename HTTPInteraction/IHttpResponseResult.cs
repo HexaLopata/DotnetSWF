@@ -1,4 +1,4 @@
-namespace DotnetSWF
+namespace DotnetSWF.HTTPInteraction
 {
     public interface IHttpResponseResult
     {
