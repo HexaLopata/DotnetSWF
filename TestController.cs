@@ -9,7 +9,7 @@ namespace DotnetSWF
         public IHttpResponseResult HomePage()
         {
             var result = HttpResponse.OK;
-            result.Content += "This is home page";
+            result.AppendString("This is home page");
             return result;
         }
     }

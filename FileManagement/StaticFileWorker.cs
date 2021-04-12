@@ -1,5 +1,4 @@
 using System.IO;
-using System.Text;
 using DotnetSWF.HTTPInteraction;
 
 namespace DotnetSWF.FileManagement
@@ -28,15 +27,15 @@ namespace DotnetSWF.FileManagement
                     filePath = _staticFileFolder + path;
                 else
                     filePath = _staticFileFolder + "/" + path;
-                var file = File.ReadAllText(filePath, Encoding.UTF8);
+                var file = File.ReadAllBytes(filePath);
                 HttpResponse result = HttpResponse.OK;
-                result.Content += file;
+                result.AppendByteContent(file);
                 return result;   
             }
             catch
             {
                 HttpResponse notFound = HttpResponse.NotFound;
-                notFound.Content += " Static file path: " + path;
+                notFound.AppendString(" Static file path: " + path);
                 return notFound;
             }
         }
