@@ -19,16 +19,24 @@ namespace DotnetSWF.HTTPInteraction
         public Dictionary<string, string> Headers => _headers;
         public HTTPRequestMethods Method => _method;
         public string Path => _path;
+        public RequestArgumentInfo[] Arguments => _args;
 
         private Dictionary<string, string> _headers;
         private HTTPRequestMethods _method;
         private string _path;
+        private RequestArgumentInfo[] _args;
 
         public HttpRequest(IDictionary<string, string> headers, HTTPRequestMethods method, string path)
         {
             _headers = new Dictionary<string, string>(headers);
             _method = method;
-            _path = path;
+            _args = ParseArguments(path);
+            if(path.Contains('?'))
+            {
+                _path = path.Substring(0, path.IndexOf('?'));
+            }
+            else
+                _path = path;
         }
 
         public override string ToString()
@@ -83,10 +91,34 @@ namespace DotnetSWF.HTTPInteraction
                 throw new Exception("HttpRequest Parse Error");
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("HttpRequest Parse Error");
             }
+        }
+
+        private static RequestArgumentInfo[] ParseArguments(string path)
+        {
+            List<RequestArgumentInfo> resultList = new List<RequestArgumentInfo>();
+            if (path.Contains('?'))
+            {
+                try
+                {
+                    var argsString = path.Substring(path.IndexOf('?') + 1);
+                    var args = argsString.Split('&');
+                    foreach(var a in args)
+                    {
+                        var nameAndValue = a.Split('=');
+                        resultList.Add(new RequestArgumentInfo(nameAndValue[0], nameAndValue[1]));
+                    }
+                    return resultList.ToArray();
+                }
+                catch
+                {
+                    return resultList.ToArray();
+                }
+            }
+            return resultList.ToArray();
         }
 
         public byte[] GetBytes(Encoding encoding)
