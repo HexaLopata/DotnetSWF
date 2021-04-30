@@ -1,4 +1,4 @@
-namespace DotnetSFW.HTTPInteraction
+namespace DotnetSWF.HTTPInteraction
 {
     public class RequestArgumentInfo
     {

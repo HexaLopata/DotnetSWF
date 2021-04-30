@@ -22,15 +22,11 @@ namespace DotnetSWF.FileManagement
         {
             try
             {
-                string filePath = string.Empty;
-                if(path.StartsWith("/"))
-                    filePath = _staticFileFolder + path;
-                else
-                    filePath = _staticFileFolder + "/" + path;
+                var filePath = CombineFilePathAndStaticFoulder(path);
                 var file = File.ReadAllBytes(filePath);
                 HttpResponse result = HttpResponse.OK;
                 result.AppendByteContent(file);
-                return result;   
+                return result;
             }
             catch
             {
@@ -40,21 +36,34 @@ namespace DotnetSWF.FileManagement
             }
         }
 
+        public string CombineFilePathAndStaticFoulder(string path)
+        {
+            string filePath = string.Empty;
+            if (path.StartsWith("/"))
+                filePath = _staticFileFolder + path;
+            else
+                filePath = _staticFileFolder + "/" + path;
+            return filePath;
+        }
+
         public string[] GetStringsFromFile(string path)
         {
-            return File.ReadAllLines(_staticFileFolder + path);
+            var filePath = CombineFilePathAndStaticFoulder(path);
+            return File.ReadAllLines(filePath);
         }
 
         public string GetTextFromFile(string path)
         {
-            return File.ReadAllText(_staticFileFolder + path);
+            var filePath = CombineFilePathAndStaticFoulder(path);
+            return File.ReadAllText(filePath);
         }
 
         public bool TryGetFileAsBytes(string path, ref byte[] bytes)
         {
             try
             {
-                bytes = GetFileAsBytes(path);
+                var filePath = CombineFilePathAndStaticFoulder(path);
+                bytes = GetFileAsBytes(filePath);
                 return true;
             }
             catch

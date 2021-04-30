@@ -73,6 +73,14 @@ namespace DotnetSWF.HTTPInteraction
                 string path = requestStringAsArray[1];
                 string[] requestStrings = requestString.Split('\n');
                 Dictionary<string, string> headers = new Dictionary<string, string>();
+                string postArguments = string.Empty; 
+                // Если содержаться аргументы в конце запроса, то добавить их как аргументы после знака ?
+                if(requestString.Split("\r\n\r\n").Length > 1)
+                {
+                    postArguments = requestString.Split("\r\n\r\n")[1].Trim('\0');
+                    path += "?" + postArguments;
+                }
+                // Парсинг заголовков
                 for (int i = 1; i < requestStrings.Length; i++)
                 {
                     string headerName = requestStrings[i].Split(':')[0];

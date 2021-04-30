@@ -1,4 +1,4 @@
-namespace DotnetSFW.Routing.VariableConverters
+namespace DotnetSWF.Routing.VariableConverters
 {
     public class BoolVariableConverter : IVariableConverter
     {

@@ -50,6 +50,10 @@ namespace DotnetSWF
                         {
                             Console.WriteLine("\tMethod: " + request.Method);
                             Console.WriteLine("\tPath: " + request.Path);
+                            if (request.Arguments.Length > 0)
+                            {
+                                System.Console.WriteLine(request.Arguments[0].Name);
+                            }
                         }
                         response = _router.GetHttpResponseByRoute(request).GetHttpResponse();
                         client.Send(response.GetBytes(Encoding.UTF8));
