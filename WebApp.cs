@@ -40,7 +40,7 @@ namespace DotnetSWF
                     }
                     while (client.Available > 0);
 
-                    string stringData = Encoding.UTF8.GetString(buffer);
+                    string stringData = Encoding.UTF8.GetString(buffer).Trim('\0');
                     HttpRequest request = null;
                     HttpResponse response = null;
                     Console.WriteLine("Client connected");
@@ -50,10 +50,6 @@ namespace DotnetSWF
                         {
                             Console.WriteLine("\tMethod: " + request.Method);
                             Console.WriteLine("\tPath: " + request.Path);
-                            if (request.Arguments.Length > 0)
-                            {
-                                System.Console.WriteLine(request.Arguments[0].Name);
-                            }
                         }
                         response = _router.GetHttpResponseByRoute(request).GetHttpResponse();
                         client.Send(response.GetBytes(Encoding.UTF8));

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System;
+using System.Web;
 
 namespace DotnetSWF.HTTPInteraction
 {
@@ -78,7 +79,10 @@ namespace DotnetSWF.HTTPInteraction
                 if(requestString.Split("\r\n\r\n").Length > 1)
                 {
                     postArguments = requestString.Split("\r\n\r\n")[1].Trim('\0');
-                    path += "?" + postArguments;
+                    if(path.Contains("?"))
+                        path += "&" + postArguments;
+                    else
+                        path += "?" + postArguments;
                 }
                 // Парсинг заголовков
                 for (int i = 1; i < requestStrings.Length; i++)
@@ -112,7 +116,8 @@ namespace DotnetSWF.HTTPInteraction
             {
                 try
                 {
-                    var argsString = path.Substring(path.IndexOf('?') + 1);
+                    // Декодирование строки с аргументами
+                    var argsString = HttpUtility.UrlDecode(path.Substring(path.IndexOf('?') + 1), Encoding.UTF8);
                     var args = argsString.Split('&');
                     foreach(var a in args)
                     {
