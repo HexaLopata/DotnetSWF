@@ -16,12 +16,22 @@ namespace DotnetSWF
         private int _backLog = 10;
         private const int bufferSize = 4096;
         private bool _detailedLog = true;
-        private IRouter _router = new DefaultRouter(new StaticFileWorker());
+        private IRouter _router;
 
         public IRouter Router
         {
             get => _router;
             set => _router = value;
+        }
+
+        public WebApp() 
+        {
+            _router = new DefaultRouter(new StaticFileWorker());
+        }
+
+        public WebApp(IRouter router) 
+        {
+            _router = router;
         }
 
         public void Run()
