@@ -37,18 +37,26 @@ namespace DotnetSWF.Routing
                     if (path.Key == request.Path)
                     {
                         List<object> args = new List<object>();
-                        // TODO Реализовать подстановку аргументов после знака '?'
 
                         // Параметры подходящего метода
                         var parameters = path.Value.Method.GetParameters();
                         var requestVariables = request.Arguments;
                         args = GetConvertedAndSortedAccordedToMethodSignatureArguments(parameters, requestVariables);
 
-                        if (path.Value.HTTPMethod == request.Method || path.Value.HTTPMethod == HTTPRequestMethods.ANY)
+                        try
                         {
-                            var source = path.Value.Source;
-                            var method = path.Value.Method;
-                            return (IHttpResponseResult)method.Invoke(source, args.ToArray());
+                            if (path.Value.HTTPMethod == request.Method || path.Value.HTTPMethod == HTTPRequestMethods.ANY)
+                            {
+                                var source = path.Value.Source;
+                                var method = path.Value.Method;
+                                return (IHttpResponseResult)method.Invoke(source, args.ToArray());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            HttpResponse result = HttpResponse.ServerError;
+                            result.AppendString("\n" + ex.Message);
+                            return result;
                         }
                     }
                 }
@@ -56,7 +64,7 @@ namespace DotnetSWF.Routing
             }
             catch (Exception ex)
             {
-                HttpResponse result = HttpResponse.ServerError;
+                HttpResponse result = HttpResponse.NotFound;
                 result.AppendString("\n" + ex.Message);
                 return result;
             }
@@ -67,7 +75,7 @@ namespace DotnetSWF.Routing
             List<object> resultList = new List<object>();
             foreach (var p in parameters)
             {
-                bool isConverted = false; 
+                bool isConverted = false;
                 foreach (var arg in requestArguments)
                 {
                     if (p.Name.ToUpper() == arg.Name.ToUpper())
@@ -77,14 +85,14 @@ namespace DotnetSWF.Routing
                             resultList.Add(_converters[p.ParameterType].Convert(arg.Value));
                             isConverted = true;
                         }
-                        catch(Exception ex)
+                        catch (Exception)
                         {
-                            throw new Exception("Appropriate conventer does not exist");
+                            throw new Exception("Argument has unknown type");
                         }
                     }
                 }
-                if(!isConverted)
-                    throw new Exception("Missing Argument");
+                if (!isConverted)
+                    throw new Exception("Invalid Arguments");
             }
             return resultList;
         }
@@ -100,7 +108,7 @@ namespace DotnetSWF.Routing
                 }
                 catch (ArgumentException)
                 {
-                    throw new Exception("There are 2 or more methods with the same paths");
+                    throw new Exception("Current path already exists");
                 }
             }
         }
