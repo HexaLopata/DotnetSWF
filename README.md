@@ -1,2 +1,2 @@
 # DotnetSWF
-Simple web framework for the dotnet platform
+Simple web framework with integrated webserver
